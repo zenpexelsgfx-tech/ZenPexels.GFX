@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenPexels.GFX | Website Analytics Dashboard</title>
+    <meta name="description" content="Professional real-time visitor analytics dashboard for ZenPexels.GFX. Tracks pageviews, traffic channels, locations, devices, and sessions.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="dashboard.css?v=2">
+</head>
+<body>
+
+    <!-- Glowing Background Orbs -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="dashboard-container">
+        
+        <!-- Header -->
+        <header class="dash-header">
+            <div class="dash-brand">
+                <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <h1 class="logo-text"><span class="logo-text-gradient">ZenPexels</span><span class="logo-accent">.GFX</span> Analytics</h1>
+                    <div class="chart-subtitle">Professional Visitor Insights & Telemetry</div>
+                </div>
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    <span>LIVE STREAM ACTIVE</span>
+                </div>
+            </div>
+            
+            <div class="dash-controls">
+                <div class="filter-group">
+                    <button class="filter-btn" data-range="today">Today</button>
+                    <button class="filter-btn" data-range="yesterday">Yesterday</button>
+                    <button class="filter-btn" data-range="7days">Last 7 Days</button>
+                    <button class="filter-btn active" data-range="30days">Last 30 Days</button>
+                </div>
+
+                <button class="btn btn-outline" id="btn-export" title="Export current data as JSON"><i class="fa-solid fa-download"></i> Export</button>
+                <button class="btn btn-outline" id="btn-reset" title="Wipe history and regenerate fresh 30-day stats"><i class="fa-solid fa-arrows-rotate"></i> Reset Data</button>
+                <button class="btn btn-primary" id="btn-simulate" title="Spawn a live visitor from a random city/device"><i class="fa-solid fa-wand-magic-sparkles"></i> Simulate Visit</button>
+                
+                <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </header>
+
+        <!-- KPI Overview Cards -->
+        <section class="overview-grid" aria-label="Key Performance Indicators">
+            
+            <!-- Unique Visitors -->
+            <div class="kpi-card glass-panel">
+                <div class="kpi-icon-container" style="background: var(--grad-emerald)">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="kpi-title">Unique Visitors</div>
+                <div class="kpi-value" id="kpi-visitors">0</div>
+                <div class="kpi-trend positive" id="trend-visitors">
+                    <i class="fa-solid fa-arrow-trend-up"></i> <span>+14.8%</span> <small style="color: var(--text-muted); font-weight: normal; margin-left: 4px;">vs last month</small>
+                </div>
+            </div>
+
+            <!-- Pageviews -->
+            <div class="kpi-card glass-panel">
+                <div class="kpi-icon-container" style="background: var(--grad-cyan)">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+                <div class="kpi-title">Total Pageviews</div>
+                <div class="kpi-value" id="kpi-pageviews">0</div>
+                <div class="kpi-trend positive" id="trend-pageviews">
+                    <i class="fa-solid fa-arrow-trend-up"></i> <span>+22.4%</span> <small style="color: var(--text-muted); font-weight: normal; margin-left: 4px;">vs last month</small>
+                </div>
+            </div>
+
+            <!-- Avg Session Duration -->
+            <div class="kpi-card glass-panel">
+                <div class="kpi-icon-container" style="background: var(--grad-blue)">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <div class="kpi-title">Avg. Session Duration</div>
+                <div class="kpi-value" id="kpi-duration">0s</div>
+                <div class="kpi-trend positive" id="trend-duration">
+                    <i class="fa-solid fa-arrow-trend-up"></i> <span>+8.2%</span> <small style="color: var(--text-muted); font-weight: normal; margin-left: 4px;">vs last month</small>
+                </div>
+            </div>
+
+            <!-- Bounce Rate -->
+            <div class="kpi-card glass-panel">
+                <div class="kpi-icon-container" style="background: var(--grad-blue); background-image: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+                <div class="kpi-title">Bounce Rate</div>
+                <div class="kpi-value" id="kpi-bounce">0.0%</div>
+                <div class="kpi-trend positive" id="trend-bounce" style="color: var(--color-emerald)">
+                    <i class="fa-solid fa-arrow-trend-down"></i> <span>-3.5%</span> <small style="color: var(--text-muted); font-weight: normal; margin-left: 4px;">vs last month</small>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Main Charts Section -->
+        <section class="charts-grid" aria-label="Analytics Visualization Charts">
+            
+            <!-- Daily Traffic Trend Chart -->
+            <div class="chart-card glass-panel">
+                <div class="chart-header">
+                    <div>
+                        <h2 class="chart-title"><i class="fa-solid fa-chart-area" style="color: var(--color-emerald)"></i> Visitor Traffic Trend</h2>
+                        <div class="chart-subtitle" id="chart-trend-subtitle">Daily count of unique visitors and total pageviews</div>
+                    </div>
+                </div>
+                <div class="chart-canvas-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Traffic Sources Chart -->
+            <div class="chart-card glass-panel">
+                <div class="chart-header">
+                    <div>
+                        <h2 class="chart-title"><i class="fa-solid fa-pie-chart" style="color: var(--color-cyan)"></i> Acquisition Channels</h2>
+                        <div class="chart-subtitle">Where your visitors came from</div>
+                    </div>
+                </div>
+                <div class="chart-canvas-container">
+                    <canvas id="sourceChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Geo and Devices Insights -->
+        <section class="insights-grid" aria-label="Geographic and Hardware Insights">
+            
+            <!-- Countries and Cities -->
+            <div class="panel-card glass-panel">
+                <div class="chart-header" style="margin-bottom: 16px;">
+                    <div>
+                        <h2 class="chart-title"><i class="fa-solid fa-earth-americas" style="color: var(--color-blue)"></i> Geographic Distribution</h2>
+                        <div class="chart-subtitle">Top country locations and active cities</div>
+                    </div>
+                </div>
+                <div class="panel-scrollable">
+                    <div class="ranking-list" id="country-list">
+                        <!-- Countries injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device Breakdowns -->
+            <div class="panel-card glass-panel">
+                <div class="chart-header" style="margin-bottom: 16px;">
+                    <div>
+                        <h2 class="chart-title"><i class="fa-solid fa-mobile-screen-button" style="color: var(--color-gold)"></i> Tech Stack & Device Profiles</h2>
+                        <div class="chart-subtitle">Operating systems, browsers, and top phone models used</div>
+                    </div>
+                </div>
+                
+                <div class="device-columns-grid">
+                    
+                    <!-- Left column inside device panel: OS & Mobile devices -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <h3 style="font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">Devices & Mobile OS</h3>
+                        <div class="device-bars-wrapper" id="device-list">
+                            <!-- Device progress bars here -->
+                        </div>
+                        
+                        <h3 style="font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-top: 12px;">Top Phone Brands & Models</h3>
+                        <div class="panel-scrollable" style="max-height: 140px;">
+                            <div class="ranking-list" id="phone-list" style="gap: 8px;">
+                                <!-- Phone models list -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right column inside device panel: Browsers -->
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">Browsers Breakdown</h3>
+                        
+                        <div class="browsers-grid" id="browser-list-container">
+                            <!-- Browsers boxes here -->
+                        </div>
+                        
+                        <!-- Top Pages viewed -->
+                        <h3 style="font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-top: 16px;">Most Visited Sections</h3>
+                        <div class="panel-scrollable" style="max-height: 120px;">
+                            <div class="ranking-list" id="pages-list" style="gap: 8px;">
+                                <!-- Pages ranked -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Real-Time Visitor Activity Stream -->
+        <section class="realtime-section">
+            <div class="realtime-card glass-panel">
+                <div class="realtime-header">
+                    <div>
+                        <h2 class="chart-title">
+                            <span class="live-dot" style="margin-right: 6px;"></span>
+                            Real-Time Activity Feed
+                        </h2>
+                        <div class="chart-subtitle">Live stream of active user navigation sessions</div>
+                    </div>
+                    <div id="live-online-indicator" style="font-weight: 700; font-size: 13px; color: var(--color-emerald); background: rgba(16, 185, 129, 0.08); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                        <i class="fa-solid fa-circle-nodes"></i> <span id="live-online-count">5</span> Active Users Online
+                    </div>
+                </div>
+
+                <div class="stream-container" id="stream-log-container">
+                    <!-- Live scrollable visitor activity logs go here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dash-footer">
+            <div>
+                &copy; 2026 ZenPexels.GFX Professional Studio. Analytics telemetry complies with privacy regulations.
+            </div>
+            <div>
+                <a href="index.html" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-arrow-left-long"></i> Back to Website Portfolio</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Status Toast Alert -->
+    <div class="status-flash" id="toast-notification">
+        <i class="fa-solid fa-circle-check"></i>
+        <div id="toast-message">New visitor telemetry captured!</div>
+    </div>
+
+    <!-- Load the tracker script first to initialize ZenAnalytics API -->
+    <script src="analytics-tracker.js"></script>
+    <!-- Load dashboard logic -->
+    <script src="dashboard.js"></script>
+</body>
+</html>
